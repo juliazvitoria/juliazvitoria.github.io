@@ -3,271 +3,190 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Music Reviews</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>Sistema de Reviews</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
 body{
-font-family:'Inter',sans-serif;
-background:transparent;
-color:white;
-padding:40px;
+    font-family: Arial, sans-serif;
+    background:#f5f5f5;
+    margin:0;
+    padding:30px;
 }
 
 .container{
-max-width:950px;
-margin:auto;
+    max-width:700px;
+    margin:auto;
 }
 
 h1{
-font-size:42px;
-font-weight:700;
-margin-bottom:8px;
+    text-align:center;
 }
 
-.subtitle{
-color:#9ca3af;
-margin-bottom:35px;
+.card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+textarea{
+    width:100%;
+    height:120px;
+    resize:none;
+    padding:10px;
+}
+
+select{
+    padding:8px;
+    margin-top:10px;
+}
+
+button{
+    background:#007bff;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+button:hover{
+    background:#0056b3;
 }
 
 .review{
-
-display:grid;
-grid-template-columns:170px 1fr;
-gap:25px;
-
-margin-bottom:30px;
-
-background:rgba(255,255,255,.06);
-backdrop-filter:blur(18px);
-
-border:1px solid rgba(255,255,255,.08);
-
-border-radius:20px;
-
-padding:22px;
-
-transition:.3s;
-
+    background:white;
+    border-radius:10px;
+    padding:15px;
+    margin-top:15px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
 
-.review:hover{
-
-transform:translateY(-5px);
-
-background:rgba(255,255,255,.08);
-
+.like{
+    background:#ff4081;
+    margin-top:10px;
 }
 
-.cover{
-
-width:170px;
-height:170px;
-border-radius:12px;
-object-fit:cover;
-
-box-shadow:0 10px 30px rgba(0,0,0,.4);
-
+.like:hover{
+    background:#e91e63;
 }
 
-.album{
-
-font-size:30px;
-font-weight:700;
-
+.data{
+    color:gray;
+    font-size:13px;
 }
-
-.artist{
-
-color:#a1a1aa;
-margin-top:4px;
-margin-bottom:15px;
-
-}
-
-.score{
-
-display:inline-block;
-
-padding:7px 14px;
-
-background:#22c55e;
-
-border-radius:999px;
-
-font-weight:bold;
-
-margin-bottom:18px;
-
-}
-
-.review p{
-
-line-height:1.8;
-
-color:#ddd;
-
-}
-
-.footer{
-
-margin-top:40px;
-
-text-align:center;
-
-color:#777;
-
-font-size:14px;
-
-}
-
-@media(max-width:700px){
-
-.review{
-
-grid-template-columns:1fr;
-
-}
-
-.cover{
-
-width:100%;
-
-height:auto;
-
-}
-
-h1{
-
-font-size:34px;
-
-}
-
-}
-
 </style>
 
 </head>
-
 <body>
 
 <div class="container">
 
-<h1>🎵 Music Reviews</h1>
+<h1>⭐ Sistema de Reviews</h1>
 
-<div class="subtitle">
-Minhas opiniões sobre álbuns, EPs e singles.
-</div>
+<div class="card">
 
-<div class="review">
+<h3>Nova Review</h3>
 
-<img class="cover"
-src="https://upload.wikimedia.org/wikipedia/en/2/2d/Radioheadokcomputer.png">
+<textarea id="texto" placeholder="Escreva sua review..."></textarea>
 
-<div>
+<br>
 
-<div class="album">
-OK Computer
-</div>
+<select id="nota">
+<option value="5">⭐⭐⭐⭐⭐ (5)</option>
+<option value="4">⭐⭐⭐⭐ (4)</option>
+<option value="3">⭐⭐⭐ (3)</option>
+<option value="2">⭐⭐ (2)</option>
+<option value="1">⭐ (1)</option>
+</select>
 
-<div class="artist">
-Radiohead • 1997
-</div>
+<br>
 
-<div class="score">
-★★★★★ 5.0
-</div>
-
-<p>
-
-Um dos discos mais importantes da história do rock alternativo.
-Cada faixa acrescenta algo diferente, e a produção continua
-impressionante décadas depois. "Paranoid Android" e "No Surprises"
-continuam entre minhas favoritas.
-
-</p>
+<button onclick="salvarReview()">
+Publicar Review
+</button>
 
 </div>
 
-</div>
+<h2>Reviews</h2>
 
-<div class="review">
-
-<img class="cover"
-src="https://upload.wikimedia.org/wikipedia/en/b/b2/Tyler%2C_the_Creator_-_IGOR.png">
-
-<div>
-
-<div class="album">
-IGOR
-</div>
-
-<div class="artist">
-Tyler, the Creator • 2019
-</div>
-
-<div class="score">
-★★★★☆ 4.5
-</div>
-
-<p>
-
-Uma mistura excelente de neo-soul, hip-hop e pop experimental.
-O álbum conta uma história do começo ao fim e possui uma identidade
-sonora muito marcante.
-
-</p>
+<div id="reviews"></div>
 
 </div>
 
-</div>
+<script>
 
-<div class="review">
+let reviews = JSON.parse(localStorage.getItem("reviews")) || [];
 
-<img class="cover"
-src="https://upload.wikimedia.org/wikipedia/en/0/0b/Brat_album_cover.png">
+function salvarReview(){
 
-<div>
+    let texto = document.getElementById("texto").value;
 
-<div class="album">
-BRAT
-</div>
+    let nota = document.getElementById("nota").value;
 
-<div class="artist">
-Charli XCX • 2024
-</div>
+    if(texto.trim()==""){
+        alert("Escreva uma review.");
+        return;
+    }
 
-<div class="score">
-★★★★★ 5.0
-</div>
+    reviews.unshift({
+        texto,
+        nota,
+        likes:0,
+        data:new Date().toLocaleString()
+    });
 
-<p>
+    localStorage.setItem("reviews",JSON.stringify(reviews));
 
-Energia do começo ao fim. Produção eletrônica criativa, refrões fortes
-e um dos lançamentos pop mais comentados dos últimos anos.
+    document.getElementById("texto").value="";
 
-</p>
+    mostrarReviews();
 
-</div>
+}
 
-</div>
+function curtir(indice){
 
-<div class="footer">
+    reviews[indice].likes++;
 
-Feito por você 🎧
+    localStorage.setItem("reviews",JSON.stringify(reviews));
 
-</div>
+    mostrarReviews();
 
-</div>
+}
+
+function mostrarReviews(){
+
+    let lista=document.getElementById("reviews");
+
+    lista.innerHTML="";
+
+    reviews.forEach((review,index)=>{
+
+        lista.innerHTML+=`
+        <div class="review">
+
+            <div class="data">${review.data}</div>
+
+            <h3>${"⭐".repeat(review.nota)}</h3>
+
+            <p>${review.texto}</p>
+
+            <button class="like" onclick="curtir(${index})">
+            ❤️ Curtir (${review.likes})
+            </button>
+
+        </div>
+        `;
+
+    });
+
+}
+
+mostrarReviews();
+
+</script>
 
 </body>
 </html>
